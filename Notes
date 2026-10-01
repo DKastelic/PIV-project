@@ -1,0 +1,7 @@
+-load images
+
+-select the matching points in the image using SIFT
+
+-use flann package to find the best matches between the points computing the approximate nearest neighbors
+
+- use RANSAC to get rid of outliers and find the homography matrix
