@@ -1,0 +1,18 @@
+Matches: 61
+Inliers: 44
+Outliers: 17
+Threshold: 3.0 px
+Seed: 42
+Trials: 22
+Input coordinate origin: 0
+Inlier median error: 0.3567 px
+Inlier RMSE: 0.6119 px
+H12 (wall1 -> wall2, zero-based pixels):
+[[ 4.50933583e-01 -1.33374044e-02  9.19597078e+01]
+ [-2.12758377e-01  8.42285861e-01  4.60030056e+01]
+ [-1.50932390e-03  1.97069077e-04  1.00000000e+00]]
+H21 / H (wall2 -> wall1, zero-based pixels):
+[[ 2.21026574e+00  8.34528130e-02 -2.07094471e+02]
+ [ 3.80195112e-01  1.56436610e+00 -1.06928174e+02]
+ [ 3.26108220e-03 -1.82330860e-04  1.00000000e+00]]
+The dominant wall plane is aligned; foreground objects can show parallax.
