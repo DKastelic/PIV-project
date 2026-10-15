@@ -162,42 +162,20 @@ def homography_errors(H, matches):
 
 
 def main():
-   
-    from pathlib import Path
-    from scipy.io import loadmat
-    import numpy as np
-    import cv2
-
-    root = Path(__file__).resolve().parent  # Folder containing this script
-
-    data = loadmat(root / "wall_data" / "homography_data.mat")
-    image1 = cv2.imread(str(root / "wall_data" / "wall1.jpg"))
-    image2 = cv2.imread(str(root / "wall_data" / "wall2.jpg"))
-
-    matches = np.column_stack((
-        data["U1"].ravel(), data["V1"].ravel(),
-        data["U2"].ravel(), data["V2"].ravel()
-    ))
-    H, inliers = ransac(
-        matches, fit_homography, homography_errors,
-        threshold=3.0, p=0.5, accuracy=0.99
-    )
-    H = fit_homography(matches[inliers])
-
-    # Plot inside main(), where image1, image2 and H are defined.
-    import matplotlib.pyplot as plt
-
-    warped = cv2.warpPerspective(image1, H, (image2.shape[1], image2.shape[0]))
-
-    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
-    for ax, img, title in zip(axes, [image1, warped, image2],
-                             ["Before", "After homography", "Reference"]):
-        ax.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        ax.set_title(title)
-        ax.axis("off")
-    plt.show()
+    data = loadmat(Path(__file__).resolve().parent / "wall_data" / "homography_data.mat")
+    matches = np.column_stack([data[k].ravel() for k in ("U1", "V1", "U2", "V2")])
+    _, inliers = ransac(matches, fit_homography, homography_errors, threshold=3.0, p=0.5, accuracy=0.99)
+    if inliers.sum() < 4:
+        raise RuntimeError("RANSAC found fewer than four inliers.")
+    return fit_homography(matches[inliers])
 
 
-if __name__ == "__main__":
-    main()
-#a
+import matplotlib.pyplot as plt
+from PIL import Image
+from skimage.transform import warp
+
+image = np.array(Image.open(Path(__file__).resolve().parent / "wall_data" / "wall1.jpg"))
+H = main()
+
+plt.figure(); plt.imshow(image); plt.title("Before homography"); plt.axis("off"); plt.show()
+plt.figure(); plt.imshow(warp(image, inverse_map=np.linalg.inv(H))); plt.title("After homography"); plt.axis("off"); plt.show()
